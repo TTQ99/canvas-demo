@@ -1,12 +1,11 @@
 /*
  * @Author: tingqiang.tan
- * @Date: 2022-04-01 21:39:26
+ * @Date: 2022-04-02 11:15:42
  * @LastEditors: tingqiang.tan
- * @LastEditTime: 2022-04-02 11:00:47
- * @FilePath: /canvas-demo/demo2/index.js
+ * @LastEditTime: 2022-04-02 11:31:56
+ * @FilePath: /canvas-demo/demo3-svg/index.js
  * @Description:
  */
-
 const data = [
   { name: "jack", num: "120" },
   { name: "bob", num: "230" },
@@ -38,20 +37,21 @@ const nameColor = {
 };
 
 const colors = Array.from(names, (name) => nameColor[name]);
-console.log(colors);
 
-console.log("12");
-const canvas = document.querySelector("canvas");
+// 使用svg 绘制
 
-canvas.style.width = chartWidth + "px";
-canvas.style.height = chartHeight + "px";
+function createSVGElement(type) {
+  return document.createElementNS("http://www.w3.org/2000/svg", type);
+}
+const svg = document.querySelector("#container-svg");
 
-canvas.width = chartWidth * 2;
-canvas.height = chartHeight * 2;
+svg.setAttribute("width", containerWidth);
+svg.setAttribute("height", containerHeight);
+svg.setAttribute("viewBox", [0, 0, containerWidth, containerHeight]);
 
-const context = canvas.getContext("2d");
-context.scale(2, 2);
-context.translate(margin, margin);
+const g = createSVGElement("g");
+g.setAttribute("transform", `translate(${margin}, ${margin})`);
+svg.appendChild(g);
 
 for (const index of includes) {
   const color = colors[index];
@@ -59,17 +59,11 @@ for (const index of includes) {
   const barHeight = barHeights[index];
   const value = values[index];
 
-  context.fillStyle = color;
-  context.fillRect(x, y - barHeight, barWidth, barHeight);
-
-  // 绘制文本
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  context.fillStyle = "white";
-  context.font = "25px PingFangSC-Regular, sans-serif";
-  context.fillText(
-    `${names[index]}-${value}`,
-    x + barWidth / 2,
-    y - barHeight / 2
-  );
+  const rect = createSVGElement("rect");
+  rect.setAttribute("x", x);
+  rect.setAttribute("y", y - barHeight);
+  rect.setAttribute("fill", color);
+  rect.setAttribute("width", barWidth);
+  rect.setAttribute("height", barHeight);
+  g.appendChild(rect);
 }
